@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Desafio Violino do Zero</title>
+    
+    <!-- Meta Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1488072076285581');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1488072076285581&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --neon-primary: #00FF88;
+        --neon-secondary: #00D1FF;
+      }
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: #020202;
+        color: white;
+        overflow-x: hidden;
+      }
+      
+      .bg-grid {
+        background-size: 50px 50px;
+        background-image: 
+          linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+          linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      }
+
+      .bg-radial-glow {
+        background: radial-gradient(circle at 50% -20%, rgba(0, 255, 136, 0.15) 0%, transparent 60%);
+      }
+
+      .glass-panel {
+        background: rgba(10, 10, 10, 0.6);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .text-gradient {
+        background: linear-gradient(90deg, var(--neon-primary), var(--neon-secondary));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .neon-glow-btn {
+        box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+        transition: all 0.3s ease;
+      }
+
+      @keyframes marquee {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
+      }
+
+      @keyframes marquee-reverse {
+        0% { transform: translateX(-50%); }
+        100% { transform: translateX(0); }
+      }
+
+      @keyframes shimmer {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+      }
+
+      .animate-marquee {
+        display: flex;
+        width: fit-content;
+        animation: marquee 60s linear infinite;
+      }
+
+      .animate-marquee-reverse {
+        display: flex;
+        width: fit-content;
+        animation: marquee-reverse 70s linear infinite;
+      }
+
+      ::-webkit-scrollbar { width: 8px; }
+      ::-webkit-scrollbar-track { background: #020202; }
+      ::-webkit-scrollbar-thumb { background: #1a1a1a; border-radius: 10px; }
+      ::-webkit-scrollbar-thumb:hover { background: var(--neon-primary); }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@18.3.1",
+    "react/": "https://esm.sh/react@18.3.1/",
+    "react-dom": "https://esm.sh/react-dom@18.3.1",
+    "react-dom/": "https://esm.sh/react-dom@18.3.1/",
+    "framer-motion": "https://esm.sh/framer-motion@11.11.11?external=react,react-dom",
+    "lucide-react": "https://esm.sh/lucide-react@0.463.0?external=react,react-dom",
+    "clsx": "https://esm.sh/clsx@2.1.1",
+    "tailwind-merge": "https://esm.sh/tailwind-merge@2.5.4",
+    "vite": "https://esm.sh/vite@^7.3.1",
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.4"
+  }
+}
+</script>
+</head>
+  <body class="bg-grid">
+    <div class="bg-radial-glow fixed inset-0 pointer-events-none"></div>
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
