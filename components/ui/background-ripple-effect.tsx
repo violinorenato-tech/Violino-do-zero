@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState, memo } from "react";
+import React, { useEffect, useRef, useState, memo, useCallback } from "react";
 import { motion, useAnimation } from "framer-motion";
 import { cn } from "../../lib/utils";
 
@@ -11,7 +11,7 @@ interface BackgroundCellsProps {
 
 export const BackgroundCells = ({ children, className }: BackgroundCellsProps) => {
   return (
-    <div className={cn("relative min-h-[80vh] w-full flex justify-center overflow-hidden bg-[#020202]", className)}>
+    <div className={cn("relative min-h-[70vh] md:min-h-[80vh] w-full flex justify-center overflow-hidden bg-[#020202]", className)}>
       <BackgroundCellCore />
       {children && (
         <div className="relative z-50 pointer-events-none select-none w-full flex items-center justify-center">
@@ -22,11 +22,11 @@ export const BackgroundCells = ({ children, className }: BackgroundCellsProps) =
   );
 };
 
-const BackgroundCellCore = () => {
+const BackgroundCellCore = memo(() => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const ref = useRef<HTMLDivElement>(null);
 
-  const handleMouseMove = (event: React.MouseEvent) => {
+  const handleMouseMove = useCallback((event: React.MouseEvent) => {
     const rect = ref.current?.getBoundingClientRect();
     if (rect) {
       setMousePosition({
@@ -34,20 +34,20 @@ const BackgroundCellCore = () => {
         y: event.clientY - rect.top,
       });
     }
-  };
+  }, []);
 
-  const size = 400;
+  const size = 300; // Reduzido para mobile para mais foco
   return (
     <div
       ref={ref}
       onMouseMove={handleMouseMove}
-      className="h-full absolute inset-0"
+      className="h-full absolute inset-0 contain-paint"
     >
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute h-full w-full pointer-events-none bottom-0 z-40 bg-gradient-to-b from-transparent via-[#020202]/20 to-[#020202]/80" />
         
         <div
-          className="absolute inset-0 z-20 bg-transparent"
+          className="absolute inset-0 z-20 bg-transparent will-change-[mask-position]"
           style={{
             maskImage: `radial-gradient(${size / 2}px circle at center, white, transparent)`,
             WebkitMaskImage: `radial-gradient(${size / 2}px circle at center, white, transparent)`,
@@ -68,7 +68,7 @@ const BackgroundCellCore = () => {
       </div>
     </div>
   );
-};
+});
 
 const Cell = memo(({ rowIdx, colIdx, clickedCell, cellClassName, rippleColor, onClick }: any) => {
   const controls = useAnimation();
@@ -79,10 +79,12 @@ const Cell = memo(({ rowIdx, colIdx, clickedCell, cellClassName, rippleColor, on
         Math.pow(clickedCell[0] - rowIdx, 2) +
           Math.pow(clickedCell[1] - colIdx, 2)
       );
-      controls.start({
-        opacity: [0, 1 - distance * 0.1, 0],
-        transition: { duration: Math.max(0.2, distance * 0.15) },
-      });
+      if (distance < 4) { // Área de impacto reduzida para performance mobile
+        controls.start({
+          opacity: [0, 1 - distance * 0.2, 0],
+          transition: { duration: Math.max(0.2, distance * 0.12) },
+        });
+      }
     }
   }, [clickedCell, rowIdx, colIdx, controls]);
 
@@ -90,14 +92,14 @@ const Cell = memo(({ rowIdx, colIdx, clickedCell, cellClassName, rippleColor, on
     <div
       onClick={onClick}
       className={cn(
-        "bg-transparent border-l border-white/10 h-12 w-12 md:h-16 md:w-16 cursor-pointer",
+        "bg-transparent border-l border-white/5 h-14 w-14 md:h-16 md:w-16 cursor-pointer",
         cellClassName
       )}
     >
       <motion.div
         initial={{ opacity: 0 }}
-        whileHover={{ opacity: [0, 1, 0.5] }}
-        transition={{ duration: 0.5, ease: "backOut" }}
+        whileHover={{ opacity: [0, 1, 0.4] }}
+        transition={{ duration: 0.3, ease: "easeOut" }}
         animate={controls}
         className="h-full w-full"
         style={{ backgroundColor: rippleColor }}
@@ -106,21 +108,36 @@ const Cell = memo(({ rowIdx, colIdx, clickedCell, cellClassName, rippleColor, on
   );
 });
 
-Cell.displayName = "Cell";
+const Pattern = memo(({ className, cellClassName, rippleColor = "rgba(0, 255, 136, 0.3)" }: any) => {
+  const [gridSize, setGridSize] = useState({ rows: 15, cols: 8 });
 
-const Pattern = ({ className, cellClassName, rippleColor = "rgba(0, 255, 136, 0.3)" }: any) => {
-  const rows = 47;
-  const cols = 20;
+  useEffect(() => {
+    const updateGrid = () => {
+      const isMobile = window.innerWidth < 768;
+      setGridSize({
+        rows: isMobile ? 12 : 35, // Menos colunas no mobile
+        cols: isMobile ? 10 : 15  // Menos linhas no mobile
+      });
+    };
+    updateGrid();
+    window.addEventListener('resize', updateGrid);
+    return () => window.removeEventListener('resize', updateGrid);
+  }, []);
+  
   const [clickedCell, setClickedCell] = useState<[number, number] | null>(null);
+  
+  const handleClick = useCallback((r: number, c: number) => {
+    setClickedCell([r, c]);
+  }, []);
 
   return (
     <div className={cn("flex flex-row relative z-30", className)}>
-      {Array.from({ length: rows }).map((_, rowIdx) => (
+      {Array.from({ length: gridSize.rows }).map((_, rowIdx) => (
         <div
           key={`matrix-row-${rowIdx}`}
-          className="flex flex-col relative z-20 border-b border-white/10"
+          className="flex flex-col relative z-20 border-b border-white/5"
         >
-          {Array.from({ length: cols }).map((_, colIdx) => (
+          {Array.from({ length: gridSize.cols }).map((_, colIdx) => (
             <Cell
               key={`cell-${rowIdx}-${colIdx}`}
               rowIdx={rowIdx}
@@ -128,11 +145,11 @@ const Pattern = ({ className, cellClassName, rippleColor = "rgba(0, 255, 136, 0.
               clickedCell={clickedCell}
               cellClassName={cellClassName}
               rippleColor={rippleColor}
-              onClick={() => setClickedCell([rowIdx, colIdx])}
+              onClick={() => handleClick(rowIdx, colIdx)}
             />
           ))}
         </div>
       ))}
     </div>
   );
-};
+});
