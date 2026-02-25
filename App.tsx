@@ -536,7 +536,7 @@ const App: React.FC = () => {
       </section>
 
       {/* Pricing Block */}
-      <section id="pricing" className="py-20 md:py-32 px-4 md:px-6 overflow-hidden">
+      <section id="pricing" className="py-20 md:py-32 px-4 md:px-6 overflow-hidden scroll-mt-20">
         <div className="max-w-6xl mx-auto relative">
           <div className="grid lg:grid-cols-2 gap-8 items-stretch">
             
