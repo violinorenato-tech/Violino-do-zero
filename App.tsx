@@ -235,6 +235,13 @@ const App: React.FC = () => {
     }
   }, []);
 
+  const scrollToSpecialOffer = useCallback(() => {
+    const element = document.getElementById('special-offer');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, []);
+
   const handleCheckout = useCallback(() => {
     if (typeof (window as any).fbq === 'function') {
       (window as any).fbq('track', 'InitiateCheckout');
@@ -276,7 +283,7 @@ const App: React.FC = () => {
             </p>
             
             <div className="w-full sm:w-auto px-4 sm:px-0">
-              <Button onClick={scrollToPricing} className="w-full sm:w-auto min-w-[280px]">
+              <Button onClick={scrollToSpecialOffer} className="w-full sm:w-auto min-w-[280px]">
                 QUERO TOCAR VIOLINO <ArrowRight className="w-5 h-5" />
               </Button>
             </div>
@@ -594,10 +601,11 @@ const App: React.FC = () => {
 
             {/* Special Offer */}
             <motion.div 
+              id="special-offer"
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="glass-panel rounded-[2rem] md:rounded-[3rem] p-1 border-[#00FF88]/30 flex flex-col relative"
+              className="glass-panel rounded-[2rem] md:rounded-[3rem] p-1 border-[#00FF88]/30 flex flex-col relative scroll-mt-24"
             >
               {/* Mais Vendido Badge */}
               <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-30">
